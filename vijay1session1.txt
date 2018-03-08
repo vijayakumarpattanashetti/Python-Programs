@@ -1,0 +1,5 @@
+1ST DAY IN PYTHON
+1. New github account
+2. Python program 1 - Printing name
+3. Python program 2 - Basic Math operations
+4. Python program 3 - Addition of two variables
