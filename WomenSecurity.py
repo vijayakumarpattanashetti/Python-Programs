@@ -13,14 +13,29 @@ print (result)
 time.sleep(int(3))
 #condition for starting the security activites
 if (result=="help"):
+ droid.toggleRingerSilentMode(True) #puts mobile into silent mode
  now =datetime.datetime.now()
  t=now.strftime("%Y-%m-%d at %H:%M:%S") #gets current date and time 
  print ("Date & time:",t)
  start_time = time.time() #starts to count time elapsed during the process
- print(droid.getLine1Number().result,': This mobile number possessor is in danger. To help & Save, track this number. Please...') #gets mobile number which is at risk
+ u=droid.getLine1Number().result #gets your mobile no.
+ v=droid.getNeighboringCellInfo().result #gets details of nearby device/s if found
+ print(u,': This mobile number possessor is in danger. To help & Save, track this number. Please...') #gets mobile number which is at risk
+ print(v,': Nearby device details')
+ #droid.phoneCallNumber ('abcdefghij') #option to make a call
  #sending mail of obtained information
  fromid = 'ptrial35@gmail.com'
  toid = 'ptrial35@gmail.com'
+ #Breaking huge message into segments
+ l='Help me. I am in danger.'
+ m='My mobile no. is '+u+'. Track this no. to locate me. Also, inform to police.'
+ n='And details of nearby device is '+str(v)+'. Probably, this no. may belong to the criminal.'
+ o='I have sent mail with some details to '+toid+'.'
+ p='Please check mails sent to this email id frequently for location and other details.'  
+ #sending sms with segmented info
+ z=[l,m,n,o,p]
+ for i in z:
+  droid.smsSend('+91abcdefghij',str(i))
  msg = MIMEMultipart()
  msg['From'] = fromid
  msg['To'] = toid
@@ -58,6 +73,10 @@ if (result=="help"):
   p.add_header('Content-Disposition', "attachment; filename= %s" % filename)
   msg.attach(p)
   i+=1
+  #option to record a video instead of taking pics
+  #droid.recorderStartVideo("/storage/emulated/0/DCIM/Recordings/3.mp4")
+  #time.sleep(3)
+  #droid.recorderStop()
  s=smtplib.SMTP('smtp.gmail.com', 587)
  s.ehlo()
  s.starttls()
@@ -67,6 +86,31 @@ if (result=="help"):
  s.quit() 
  print('done')  
  print("--- %s seconds ---" % (time.time() - start_time)) #prints total time elapsed from start till here
+ droid.recorderStartVideo("/storage/emulated/0/DCIM/Camera/3.mp4")
+ time.sleep(5)
+ droid.recorderStop()
+ k='/storage/emulated/0/DCIM/Camera/3.mp4'
+ msg = MIMEMultipart()
+ msg['From'] = fromid
+ msg['To'] = toid
+ msg['Subject'] = "Help request-video proof"
+ body = "Video that say I am in danger."
+ msg.attach(MIMEText(body, 'plain'))
+ filename ="3.mp4"
+ attachment = open(k,'rb')
+ p= MIMEBase('application', 'octet-stream')
+ p.set_payload((attachment).read())
+ encoders.encode_base64(p)
+ p.add_header('Content-Disposition', "attachment; filename= %s" % filename)
+ msg.attach(p)
+ s = smtplib.SMTP('smtp.gmail.com',587)
+ s.ehlo()
+ s.starttls()
+ s.login(fromid,"cmruniversity")
+ text = msg.as_string()
+ s.sendmail(fromid, toid, text)
+ s.quit()
+ print('done')
  #gps activity starts
  droid.makeToast("fetching GPS data") #gets access to gps
  print("location data...")
