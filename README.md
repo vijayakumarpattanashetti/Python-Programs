@@ -1,2 +1,3 @@
-# pythonfinal
-all final i/p and o/p
+# Python
+
+Academic lab session uploads and course final project.
